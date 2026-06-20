@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS // Customer Churn Intelligence Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Ambient Canvas Particles -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Main Container -->
+    <div class="dashboard-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">N</div>
+                <div class="brand-name">NEXUS<span>// CHURN LABS</span></div>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active">
+                    <i data-lucide="shield-alert"></i>
+                    <span>Risk Center</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i data-lucide="line-chart"></i>
+                    <span>Cohort Analytics</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i data-lucide="users"></i>
+                    <span>Segments</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i data-lucide="gift"></i>
+                    <span>Offers Portal</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i data-lucide="sliders-horizontal"></i>
+                    <span>Simulator Settings</span>
+                </a>
+            </nav>
+
+            <!-- Active Campaigns Panel -->
+            <div class="sidebar-widget">
+                <div class="widget-header">
+                    <i data-lucide="sparkles" class="text-neon-gold"></i>
+                    <span>ACTIVE PLAYBOOKS</span>
+                </div>
+                <ul class="playbook-list">
+                    <li>
+                        <span class="playbook-tag badge-violet">Discount</span>
+                        <span class="playbook-name">15% Lifetime Coupon</span>
+                    </li>
+                    <li>
+                        <span class="playbook-tag badge-cyan">Support</span>
+                        <span class="playbook-name">VIP Priority Setup Audit</span>
+                    </li>
+                    <li>
+                        <span class="playbook-tag badge-rose">Consult</span>
+                        <span class="playbook-name">Account Health Check</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="system-status">
+                <div class="status-indicator online"></div>
+                <div class="status-text">
+                    <div class="status-title">Prediction Engine</div>
+                    <div class="status-desc">Active // Model v4.1</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-greet">
+                    <h1>CUSTOMER CHURN INTELLIGENCE</h1>
+                    <p>Proactive predictive modeling, risk analysis, and mitigation playbooks.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="date-badge">
+                        <i data-lucide="calendar"></i>
+                        <span id="current-date">09 Jun 2026</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                
+                <!-- KPI Card 1: Aggregate Churn Rate -->
+                <div class="kpi-card card-neon-rose">
+                    <div class="kpi-header">
+                        <span class="kpi-title">AGGREGATE CHURN RATE</span>
+                        <div class="kpi-icon-box"><i data-lucide="user-minus"></i></div>
+                    </div>
+                    <div class="kpi-value-container">
+                        <span class="kpi-value" id="kpi-churn-rate">2.41</span>
+                        <span class="kpi-currency">%</span>
+                    </div>
+                    <div class="kpi-footer">
+                        <span class="trend trend-down">
+                            <i data-lucide="trending-down"></i> -0.42%
+                        </span>
+                        <span class="kpi-subtext">vs last month</span>
+                    </div>
+                </div>
+
+                <!-- KPI Card 2: Customers At Risk -->
+                <div class="kpi-card card-neon-gold">
+                    <div class="kpi-header">
+                        <span class="kpi-title">CUSTOMERS AT RISK</span>
+                        <div class="kpi-icon-box"><i data-lucide="alert-triangle"></i></div>
+                    </div>
+                    <div class="kpi-value-container">
+                        <span class="kpi-value" id="kpi-risk-count">14</span>
+                        <span class="kpi-currency" style="font-size: 16px; margin-left: 5px;">users</span>
+                    </div>
+                    <div class="kpi-footer">
+                        <span class="trend trend-up">
+                            <i data-lucide="trending-up"></i> +2
+                        </span>
+                        <span class="kpi-subtext">flagged today</span>
+                    </div>
+                </div>
+
+                <!-- KPI Card 3: MRR at Risk -->
+                <div class="kpi-card card-neon-violet">
+                    <div class="kpi-header">
+                        <span class="kpi-title">MRR AT RISK (USD)</span>
+                        <div class="kpi-icon-box"><i data-lucide="dollar-sign"></i></div>
+                    </div>
+                    <div class="kpi-value-container">
+                        <span class="kpi-currency">$</span>
+                        <span class="kpi-value" id="kpi-mrr-risk">8,240</span>
+                    </div>
+                    <div class="kpi-footer">
+                        <span class="trend trend-down">
+                            <i data-lucide="trending-down"></i> -11.8%
+                        </span>
+                        <span class="kpi-subtext">exposure index</span>
+                    </div>
+                </div>
+
+                <!-- KPI Card 4: Retention Save Rate -->
+                <div class="kpi-card card-neon-emerald radial-kpi">
+                    <div class="radial-container">
+                        <svg class="radial-svg" viewBox="0 0 100 100">
+                            <circle class="radial-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="radial-progress" cx="50" cy="50" r="40" id="save-progress-circle"></circle>
+                        </svg>
+                        <div class="radial-inner">
+                            <span id="save-percentage">72%</span>
+                            <span class="radial-label">Saved</span>
+                        </div>
+                    </div>
+                    <div class="radial-text">
+                        <span class="kpi-title">RETENTION SAVES</span>
+                        <span class="target-details"><strong id="current-saves">18</strong> / <span id="total-saves">25</span> targets</span>
+                    </div>
+                </div>
+
+                <!-- Left Panel: Analytical Charts -->
+                <div class="dashboard-card col-span-2 chart-card-large">
+                    <div class="card-header">
+                        <div class="card-title-group">
+                            <h3>Churn Trend & Cohort Retention</h3>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="churn-trend-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Predictive Churn Simulator -->
+                <div class="dashboard-card col-span-2 simulator-card">
+                    <div class="card-header">
+                        <div class="title-with-icon">
+                            <i data-lucide="cpu" class="text-neon-gold"></i>
+                            <h3>Predictive Churn Risk Simulator</h3>
+                        </div>
+                        <span class="tag-status">Model active</span>
+                    </div>
+                    <div class="simulator-layout">
+                        <!-- Controls -->
+                        <div class="simulator-controls">
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <label for="sim-tickets">Support Tickets (Monthly)</label>
+                                    <span class="slider-badge" id="sim-tickets-val">3</span>
+                                </div>
+                                <input type="range" id="sim-tickets" min="0" max="15" value="3" class="sim-slider">
+                            </div>
+
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <label for="sim-logins">Login Frequency (Monthly)</label>
+                                    <span class="slider-badge" id="sim-logins-val">22</span>
+                                </div>
+                                <input type="range" id="sim-logins" min="0" max="60" value="22" class="sim-slider">
+                            </div>
+
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <label for="sim-billing">Billing Issues Flagged</label>
+                                    <span class="slider-badge" id="sim-billing-val">1</span>
+                                </div>
+                                <input type="range" id="sim-billing" min="0" max="5" value="1" class="sim-slider">
+                            </div>
+
+                            <div class="slider-group">
+                                <label for="sim-contract">Subscription Plan / Contract Type</label>
+                                <select id="sim-contract" class="select-input select-full">
+                                    <option value="Month-to-Month">Month-to-Month Subscription</option>
+                                    <option value="1-Year">1-Year Term Contract</option>
+                                    <option value="2-Year">2-Year Term Contract</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Output Gauge & Explainer -->
+                        <div class="simulator-gauge-container">
+                            <div class="gauge-ring-box">
+                                <svg class="gauge-ring-svg" viewBox="0 0 100 100">
+                                    <circle class="gauge-bg" cx="50" cy="50" r="42"></circle>
+                                    <circle class="gauge-fill" cx="50" cy="50" r="42" id="sim-gauge-circle"></circle>
+                                </svg>
+                                <div class="gauge-ring-inner">
+                                    <span id="sim-risk-percent">38%</span>
+                                    <span id="sim-risk-level">MEDIUM RISK</span>
+                                </div>
+                            </div>
+                            <div class="explainer-card">
+                                <div class="explainer-title">Risk Analysis Drivers</div>
+                                <p id="sim-explainer-text">Risk is moderate. The customer shows healthy login frequency, but billing discrepancies and monthly contract structures increase fragility.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Panel: At-Risk Customer Database -->
+                <div class="dashboard-card col-span-4 database-card">
+                    <div class="card-header stack-mobile">
+                        <div class="title-with-icon">
+                            <i data-lucide="users" class="text-neon-rose"></i>
+                            <h3>At-Risk Customer Registry</h3>
+                        </div>
+                        <div class="table-actions">
+                            <div class="search-box">
+                                <i data-lucide="search"></i>
+                                <input type="text" id="table-search" placeholder="Search client or ID...">
+                            </div>
+                            <select id="plan-filter" class="select-input">
+                                <option value="ALL">All Plans</option>
+                                <option value="Starter">Starter Plan</option>
+                                <option value="Pro">Pro Plan</option>
+                                <option value="Enterprise">Enterprise Suite</option>
+                            </select>
+                            <button id="reset-filters" class="btn btn-icon">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Client ID</th>
+                                    <th>Client Name</th>
+                                    <th>Plan / Contract</th>
+                                    <th class="text-center">Usage Rating</th>
+                                    <th class="text-center">Tickets</th>
+                                    <th>Billing Status</th>
+                                    <th class="text-right">MRR Value</th>
+                                    <th class="text-center">Risk Score</th>
+                                    <th class="text-center">Retention Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customers-tbody">
+                                <!-- Loaded dynamically via app.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <span id="table-showing-text">Showing 5 of 14 flagged customers</span>
+                        <div class="pagination-controls">
+                            <button class="btn btn-sm btn-icon" id="prev-page"><i data-lucide="chevron-left"></i></button>
+                            <span class="page-indicator" id="page-num">1 / 3</span>
+                            <button class="btn btn-sm btn-icon" id="next-page"><i data-lucide="chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Main Logic Script -->
+    <script src="app.js"></script>
+</body>
+</html>
