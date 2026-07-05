@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Churn Analysis Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Filters -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">C</div>
+        <h1>ChurnAnalytics</h1>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-group">
+          <label class="filter-label">Churn Status</label>
+          <select id="filter-churn">
+            <option value="all" selected>All Customers</option>
+            <option value="Yes">Churned</option>
+            <option value="No">Retained</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Contract Type</label>
+          <select id="filter-contract">
+            <option value="all">All Contracts</option>
+            <option value="Month-to-month">Month-to-month</option>
+            <option value="One year">One year</option>
+            <option value="Two year">Two year</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Internet Service</label>
+          <select id="filter-internet">
+            <option value="all">All Services</option>
+            <option value="DSL">DSL</option>
+            <option value="Fiber optic">Fiber optic</option>
+            <option value="No">No Internet Service</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Payment Method</label>
+          <select id="filter-payment">
+            <option value="all">All Methods</option>
+            <option value="Electronic check">Electronic check</option>
+            <option value="Mailed check">Mailed check</option>
+            <option value="Bank transfer (automatic)">Bank transfer</option>
+            <option value="Credit card (automatic)">Credit card</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Max Support Tickets</label>
+          <input type="range" id="filter-tickets" min="0" max="8" value="8">
+          <div class="range-display">
+            <span>0</span>
+            <span id="tickets-val">8</span>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Min Tenure (Months)</label>
+          <input type="range" id="filter-tenure" min="1" max="72" value="1">
+          <div class="range-display">
+            <span>1 mo</span>
+            <span id="tenure-val">1 mo</span>
+          </div>
+        </div>
+
+        <button class="btn-reset" id="btn-reset-filters">
+          <i data-lucide="rotate-ccw"></i> Reset Filters
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header -->
+      <header class="dashboard-header">
+        <div class="dashboard-title">
+          <h2>Customer Churn Analytics</h2>
+          <p>Real-time churn metrics, predictive risk scores, and retention recommendations</p>
+        </div>
+      </header>
+
+      <!-- KPI Cards Panel -->
+      <section class="kpi-grid">
+        <div class="kpi-card" style="border-left: 4px solid var(--danger);">
+          <div class="kpi-icon" style="background-color: var(--danger-glow); color: var(--danger);">
+            <i data-lucide="percent"></i>
+          </div>
+          <div class="kpi-info">
+            <span class="kpi-label">Churn Rate</span>
+            <span class="kpi-value" id="kpi-churn-rate">0.0%</span>
+            <span class="kpi-trend trend-positive" id="kpi-churn-trend">↓ 1.4% <span class="trend-period">vs last mo</span></span>
+          </div>
+        </div>
+
+        <div class="kpi-card" style="border-left: 4px solid var(--primary);">
+          <div class="kpi-icon" style="background-color: var(--primary-glow); color: var(--primary);">
+            <i data-lucide="users"></i>
+          </div>
+          <div class="kpi-info">
+            <span class="kpi-label">Total Customers</span>
+            <span class="kpi-value" id="kpi-total-cust">0</span>
+            <span class="kpi-trend trend-positive" id="kpi-cust-trend">↑ 3.8% <span class="trend-period">vs last mo</span></span>
+          </div>
+        </div>
+
+        <div class="kpi-card" style="border-left: 4px solid var(--warning);">
+          <div class="kpi-icon" style="background-color: var(--warning-glow); color: var(--warning);">
+            <i data-lucide="dollar-sign"></i>
+          </div>
+          <div class="kpi-info">
+            <span class="kpi-label">Revenue at Risk</span>
+            <span class="kpi-value" id="kpi-lost-rev">$0</span>
+            <span class="kpi-trend trend-positive" id="kpi-rev-trend">↓ 2.1% <span class="trend-period">vs last mo</span></span>
+          </div>
+        </div>
+
+        <div class="kpi-card" style="border-left: 4px solid var(--success);">
+          <div class="kpi-icon" style="background-color: var(--success-glow); color: var(--success);">
+            <i data-lucide="calendar"></i>
+          </div>
+          <div class="kpi-info">
+            <span class="kpi-label">Avg. Tenure</span>
+            <span class="kpi-value" id="kpi-avg-tenure">0 mo</span>
+            <span class="kpi-trend trend-positive" id="kpi-tenure-trend">↑ 0.5 mo <span class="trend-period">vs last mo</span></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 1: Predictive & Drivers Panel -->
+      <section class="chart-grid">
+        <!-- Churn Forecast & Drivers -->
+        <div class="card">
+          <div class="card-title">
+            <h3>30-Day Forecast & Churn Drivers</h3>
+          </div>
+          <div class="forecast-drivers-container">
+            <div class="forecast-box">
+              <div class="forecast-header">30-DAY CHURN FORECAST</div>
+              <div class="forecast-value" id="forecast-value">0 Customers</div>
+              <div class="forecast-meta" id="forecast-mrr">MRR at risk: $0</div>
+              <p class="forecast-desc">Predicted using subscriber interaction history, ticket density, and billing types.</p>
+            </div>
+            <div class="drivers-box">
+              <div class="drivers-header">TOP CHURN DRIVERS</div>
+              <div class="drivers-list" id="drivers-list">
+                <!-- Dynamically populated drivers -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Retention Recommendations Panel -->
+        <div class="card">
+          <div class="card-title">
+            <h3>Retention Recommendations</h3>
+          </div>
+          <div class="recommendations-container" id="recommendations-list">
+            <!-- Dynamically populated recommendations -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Charts Panel -->
+      <section class="chart-grid">
+        <!-- Monthly Churn Trend -->
+        <div class="card">
+          <div class="card-title">
+            <h3>Monthly Churn Trend (12 Months)</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-monthly-trend"></canvas>
+          </div>
+        </div>
+
+        <!-- Risk Score Distribution -->
+        <div class="card">
+          <div class="card-title">
+            <h3>Risk Score Distribution</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-risk-dist"></canvas>
+          </div>
+        </div>
+
+        <!-- Churn by Contract Type -->
+        <div class="card">
+          <div class="card-title">
+            <h3>Contract Breakdown (Retained vs. Churned)</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-contract"></canvas>
+          </div>
+        </div>
+
+        <!-- Charges & Services Breakdown -->
+        <div class="card">
+          <div class="card-title">
+            <h3>Churn Rate by Internet Service</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-charges-dist"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Tables Grid -->
+      <section class="tables-split-grid">
+        <!-- High-Risk Customers Table -->
+        <div class="table-card flex-1">
+          <div class="table-header-controls">
+            <h3>High-Risk Customers</h3>
+            <span class="badge badge-churned" style="font-size: 0.8rem;" id="high-risk-count-badge">0 At Risk</span>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Risk Score</th>
+                  <th>Tenure</th>
+                  <th>Charges</th>
+                  <th>Probability</th>
+                </tr>
+              </thead>
+              <tbody id="high-risk-table-body">
+                <!-- Dynamically populated high-risk rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Main Customer Directory -->
+        <div class="table-card flex-2">
+          <div class="table-header-controls">
+            <h3>Customer Directory</h3>
+            <div class="search-wrapper">
+              <i data-lucide="search" class="search-icon"></i>
+              <input type="text" id="search-customer" placeholder="Search ID, name or email...">
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th id="th-id">Customer ID <i data-lucide="chevron-down" style="display:inline-block; width:12px; vertical-align:middle;"></i></th>
+                  <th id="th-name">Name</th>
+                  <th id="th-tenure">Tenure</th>
+                  <th id="th-contract">Contract</th>
+                  <th id="th-charges">Monthly</th>
+                  <th id="th-status">Status</th>
+                </tr>
+              </thead>
+              <tbody id="customer-table-body">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination">
+            <span class="pagination-info" id="pagination-info">Showing 0 to 0 of 0 entries</span>
+            <div class="pagination-buttons">
+              <button class="btn-page" id="btn-prev-page" disabled>Previous</button>
+              <button class="btn-page" id="btn-next-page" disabled>Next</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Detail Profile Drawer Overlay -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+
+  <!-- Drawer Container -->
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <h3 id="drawer-cust-name">Customer Details</h3>
+      <button class="btn-close" id="btn-close-drawer">&times;</button>
+    </div>
+    <div class="drawer-body">
+      <!-- dynamic loading content -->
+      <div id="drawer-content"></div>
+    </div>
+  </div>
+
+  <!-- Lucide Icons Package -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- App JS & Data JS -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
